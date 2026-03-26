@@ -33,3 +33,15 @@
 ## 8. Resgatar todas as propostas que estão em andamento para reativar as negociações
 - [ ] **Planos** procurar por negociações de planos para retomar
 - [ ] **Patrocinio** procurar por negociações de venda de patrocinio para retomar
+
+## 9. Estabelecer as metricas de leads e atividades dia
+- [ ] **Prospecções ativas** quantas prospecções ativas fazer por dia;
+- [ ] **Envio de whatsapp** quantas mensagens enviar para tratar de clientes por dia;
+- [ ] **Bitrix** quantas mensagens foram vistas e tratadas no britrix por dia;
+- [ ] **Email de orçamento** quantas mensagens de orçamentos foram enviadas por dia;
+- [ ] **Email de resposta** quantas mensagens de contatos foram enviadas por dia;
+
+## 10. Estabelecer os segmnetos princiapis que a Realize vai atuar para vender patrocinio
+- [ ] **Educação** procurar leads e listar
+- [ ] **Tecnologia** procurar leads e listar
+- [ ] **Entretenimento** procurar leads e listar
