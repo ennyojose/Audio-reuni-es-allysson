@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_Patrocinios" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_VendaPatrocinios" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_Patrocinio" name="Início da Prospecção / Entrada Lead">
+      <bpmn:outgoing>Flow_P1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_Qualificar" name="Qualificar Lead (Identificar Decisor)">
+      <bpmn:incoming>Flow_P1</bpmn:incoming>
+      <bpmn:outgoing>Flow_P2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_P1" sourceRef="StartEvent_Patrocinio" targetRef="Task_Qualificar" />
+    <bpmn:task id="Task_ReuniaoPatrocinio" name="Agendar e Realizar Reunião">
+      <bpmn:incoming>Flow_P2</bpmn:incoming>
+      <bpmn:outgoing>Flow_P3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_P2" sourceRef="Task_Qualificar" targetRef="Task_ReuniaoPatrocinio" />
+    <bpmn:task id="Task_ApresentarEvento" name="Apresentar Planta, Escala e Público">
+      <bpmn:incoming>Flow_P3</bpmn:incoming>
+      <bpmn:outgoing>Flow_P4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_P3" sourceRef="Task_ReuniaoPatrocinio" targetRef="Task_ApresentarEvento" />
+    <bpmn:task id="Task_ProporAtivacao" name="Apresentar Soluções (Estande, Palestras)">
+      <bpmn:incoming>Flow_P4</bpmn:incoming>
+      <bpmn:outgoing>Flow_P5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_P4" sourceRef="Task_ApresentarEvento" targetRef="Task_ProporAtivacao" />
+    <bpmn:exclusiveGateway id="Gateway_Patrocinio_Aprovacao" name="Fechamento do Estande?">
+      <bpmn:incoming>Flow_P5</bpmn:incoming>
+      <bpmn:outgoing>Flow_PSim</bpmn:outgoing>
+      <bpmn:outgoing>Flow_PNao</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_P5" sourceRef="Task_ProporAtivacao" targetRef="Gateway_Patrocinio_Aprovacao" />
+    <bpmn:task id="Task_CrossSell" name="Oferecer Outras Opções (Material na Bolsa)">
+      <bpmn:incoming>Flow_PNao</bpmn:incoming>
+      <bpmn:outgoing>Flow_P6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_PNao" name="Acha Caro / Não Quer Estande" sourceRef="Gateway_Patrocinio_Aprovacao" targetRef="Task_CrossSell" />
+    <bpmn:endEvent id="EndEvent_Perdido" name="Venda Perdida">
+      <bpmn:incoming>Flow_P6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_P6" sourceRef="Task_CrossSell" targetRef="EndEvent_Perdido" />
+    <bpmn:task id="Task_AssinarPatrocinio" name="Reservar Planta e Fechar Negócio">
+      <bpmn:incoming>Flow_PSim</bpmn:incoming>
+      <bpmn:outgoing>Flow_P7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_PSim" name="Sim" sourceRef="Gateway_Patrocinio_Aprovacao" targetRef="Task_AssinarPatrocinio" />
+    <bpmn:endEvent id="EndEvent_PatrocinioSucesso" name="Patrocinador Ativo no Evento">
+      <bpmn:incoming>Flow_P7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_P7" sourceRef="Task_AssinarPatrocinio" targetRef="EndEvent_PatrocinioSucesso" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Patrocinio">
+    <bpmndi:BPMNPlane id="BPMNPlane_Patrocinio" bpmnElement="Process_VendaPatrocinios">
+      <bpmndi:BPMNShape id="_BPMNShape_ST_1" bpmnElement="StartEvent_Patrocinio">
+        <dc:Bounds x="150" y="200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="130" y="243" width="76" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A1_di" bpmnElement="Task_Qualificar">
+        <dc:Bounds x="250" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="Flow_P1">
+        <di:waypoint x="186" y="218" />
+        <di:waypoint x="250" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="A2_di" bpmnElement="Task_ReuniaoPatrocinio">
+        <dc:Bounds x="400" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F2_di" bpmnElement="Flow_P2">
+        <di:waypoint x="350" y="218" />
+        <di:waypoint x="400" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="A3_di" bpmnElement="Task_ApresentarEvento">
+        <dc:Bounds x="550" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F3_di" bpmnElement="Flow_P3">
+        <di:waypoint x="500" y="218" />
+        <di:waypoint x="550" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="A4_di" bpmnElement="Task_ProporAtivacao">
+        <dc:Bounds x="700" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F4_di" bpmnElement="Flow_P4">
+        <di:waypoint x="650" y="218" />
+        <di:waypoint x="700" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="G1_di" bpmnElement="Gateway_Patrocinio_Aprovacao" isMarkerVisible="true">
+        <dc:Bounds x="850" y="193" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="836" y="156" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F5_di" bpmnElement="Flow_P5">
+        <di:waypoint x="800" y="218" />
+        <di:waypoint x="850" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="AC_di" bpmnElement="Task_CrossSell">
+        <dc:Bounds x="960" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="FNao_di" bpmnElement="Flow_PNao">
+        <di:waypoint x="875" y="243" />
+        <di:waypoint x="875" y="340" />
+        <di:waypoint x="960" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="880" y="306" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EP_di" bpmnElement="EndEvent_Perdido">
+        <dc:Bounds x="1120" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1102" y="365" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F6_di" bpmnElement="Flow_P6">
+        <di:waypoint x="1060" y="340" />
+        <di:waypoint x="1120" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="AS_di" bpmnElement="Task_AssinarPatrocinio">
+        <dc:Bounds x="960" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="FSim_di" bpmnElement="Flow_PSim">
+        <di:waypoint x="900" y="218" />
+        <di:waypoint x="960" y="218" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="920" y="200" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ES_di" bpmnElement="EndEvent_PatrocinioSucesso">
+        <dc:Bounds x="1120" y="200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1094" y="243" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F7_di" bpmnElement="Flow_P7">
+        <di:waypoint x="1060" y="218" />
+        <di:waypoint x="1120" y="218" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

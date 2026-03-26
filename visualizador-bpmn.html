@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador BPMN - Realize Eventos</title>
+  
+  <!-- BPMN.js viewer -->
+  <script src="https://unpkg.com/bpmn-js@17.7.1/dist/bpmn-navigated-viewer.development.js"></script>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #f8f9fa;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    #canvas {
+      flex: 1;
+      width: 100%;
+      background-color: white;
+      position: relative;
+    }
+
+    .drop-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #7f8c8d;
+      pointer-events: none;
+    }
+
+    .drop-message h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .bjs-powered-by {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Visualizador de Processos Comerciais</h1>
+    <div class="controls">
+      <div class="file-input-wrapper">
+        <button class="btn">Carregar Arquivo .bpmn</button>
+        <input type="file" id="file-input" accept=".bpmn, .xml">
+      </div>
+      <button class="btn" id="btn-zoom-in" title="Aumentar Zoom">🔍+</button>
+      <button class="btn" id="btn-zoom-out" title="Diminuir Zoom">🔍-</button>
+      <button class="btn" id="btn-reset" title="Ajustar à Tela">Focar Tudo</button>
+    </div>
+  </header>
+
+  <div id="canvas">
+    <div class="drop-message" id="drop-message">
+      <h2>Abra ou arraste um arquivo BPMN aqui</h2>
+      <p>Você pode carregar "fluxo-comercial-planos.bpmn" ou "fluxo-comercial-patrocinios.bpmn"</p>
+    </div>
+  </div>
+
+  <script>
+    // Configurar o visualizador BPMN (apenas leitura e navegação)
+    const bpmnViewer = new BpmnJS({
+      container: '#canvas'
+    });
+
+    const dropMessage = document.getElementById('drop-message');
+
+    // Função para renderizar o diagrama XML
+    async function openDiagram(bpmnXML) {
+      try {
+        await bpmnViewer.importXML(bpmnXML);
+        
+        // Esconder mensagem inicial
+        dropMessage.style.display = 'none';
+        
+        // Ajustar zoom para caber na tela
+        bpmnViewer.get('canvas').zoom('fit-viewport');
+      } catch (err) {
+        console.error('Erro ao renderizar BPMN', err);
+        alert('Não foi possível ler o arquivo BPMN. Verifique se o formato é válido.');
+      }
+    }
+
+    // Processar arquivo selecionado via botão
+    document.getElementById('file-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        readFile(file);
+      }
+    });
+
+    // Função de leitura de arquivo
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        openDiagram(e.target.result);
+      };
+      reader.readAsText(file);
+    }
+
+    // Suporte a arrastar e soltar (Drag and Drop) no canvas
+    const canvas = document.getElementById('canvas');
+    
+    canvas.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      canvas.style.backgroundColor = '#ecf0f1';
+    });
+    
+    canvas.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      canvas.style.backgroundColor = 'white';
+    });
+    
+    canvas.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      canvas.style.backgroundColor = 'white';
+      
+      const file = e.dataTransfer.files[0];
+      if (file && (file.name.endsWith('.bpmn') || file.name.endsWith('.xml'))) {
+        readFile(file);
+      } else {
+        alert('Por favor, solte apenas arquivos com extensão .bpmn ou .xml');
+      }
+    });
+
+    // Controles de zoom
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {
+      bpmnViewer.get('canvas').zoom('+0.1');
+    });
+
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {
+      bpmnViewer.get('canvas').zoom('-0.1');
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      bpmnViewer.get('canvas').zoom('fit-viewport');
+    });
+  </script>
+</body>
+</html>
